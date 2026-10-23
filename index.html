@@ -10,14 +10,88 @@
     <!-- Include pako library for GZIP decompression -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; background: #fdfdfd; color: #333; }
-        .btn { display: inline-block; background: #6750A4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 20px; font-weight: bold; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #FFFBF2; /* creamBg */
+            color: #421F07; /* textOnBright */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .card {
+            background: #FFFFEFCC; /* cardBg */
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(66, 31, 7, 0.08);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(200, 90, 50, 0.15);
+        }
+        .card-topbar {
+            background-color: #241104; /* topbarBG */
+            color: #FFFBF2; /* textOnDark */
+            padding: 14px;
+            border-radius: 12px 12px 0 0;
+            margin: -32px -32px 24px -32px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        h1 {
+            font-size: 22px;
+            color: #421F07; /* textOnBright */
+            margin-bottom: 12px;
+            margin-top: 0;
+        }
+        p {
+            color: #421F07; /* textOnBright */
+            opacity: 0.85;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #C85A32; /* secondaryColor */
+            color: #FFFBF2; /* textOnDark */
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 8px 0;
+            width: 80%;
+            box-sizing: border-box;
+            transition: opacity 0.2s;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .btn-secondary {
+            background-color: #5B7049; /* tertiaryColor */
+            color: #FFFBF2; /* textOnDark */
+        }
     </style>
 </head>
 <body>
-    <h1 id="recipe-title">Loading Recipe...</h1>
-    <p id="recipe-desc">Opening My Cooking Grimoire...</p>
-    <a id="play-store-btn" class="btn" href="https://play.google.com/store/apps/dev?id=6574659259073609998">Get My Cooking Grimoire on Google Play</a>
+
+    <div class="card">
+        <div class="card-topbar">My Cooking Grimoire</div>
+        
+        <h1 id="recipe-title">Loading Recipe...</h1>
+        <p id="recipe-desc">Opening recipe in the app...</p>
+        
+        <!-- Manual button if auto-redirect fails -->
+        <a id="manual-open-btn" class="btn" href="#">Open in App</a>
+        <br>
+        <!-- Google Play Fallback Button using tertiary color accent -->
+        <a id="play-store-btn" class="btn btn-secondary" href="https://play.google.com/store/apps/dev?id=6574659259073609998">Get on Google Play</a>
+    </div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
@@ -44,10 +118,13 @@
                 document.title = recipeName + " - My Cooking Grimoire";
                 document.getElementById('og-title').setAttribute('content', recipeName);
                 document.getElementById('recipe-title').innerText = recipeName;
-                document.getElementById('recipe-desc').innerText = "Click below to open or download My Cooking Grimoire.";
+                document.getElementById('recipe-desc').innerText = "Tap below to view this recipe inside My Cooking Grimoire.";
 
-                // 4. Attempt to deep link into the app
+                // 4. Set up deep link URLs
                 const appUri = "recipebook://share?data=" + base64Data;
+                document.getElementById('manual-open-btn').href = appUri;
+
+                // 5. Attempt to automatically deep link into the app
                 setTimeout(() => {
                     window.location.href = appUri;
                 }, 500);
@@ -55,9 +132,13 @@
             } catch (e) {
                 console.error("Error parsing recipe data:", e);
                 document.getElementById('recipe-title').innerText = "Shared Recipe";
+                document.getElementById('recipe-desc').innerText = "Could not parse recipe details.";
+                document.getElementById('manual-open-btn').style.display = 'none';
             }
         } else {
             document.getElementById('recipe-title').innerText = "My Cooking Grimoire";
+            document.getElementById('recipe-desc').innerText = "Your personal recipe keeper.";
+            document.getElementById('manual-open-btn').style.display = 'none';
         }
     </script>
 </body>
